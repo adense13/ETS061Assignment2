@@ -48,7 +48,8 @@ x
 oldProfit = 0;
 profit = -c*x
 
-profitArray = [profit]
+profitArray = [profit];
+demandArray = [b(5)];
  
  while true
     oldProfit = profit;
@@ -58,10 +59,12 @@ profitArray = [profit]
     [x,fval,exitflag,output,lambda] = linprog(c', A, b, [], [], lb, [], [], options);
     profit = -c*x
     profitArray=[profitArray profit];
+    demandArray=[demandArray b(5)];
     if((profit-oldProfit) < 0.1), break, end
  end
-plot(profitArray)
+plot(demandArray, profitArray)
 ylabel('Total Profit (1000 SEK)')
+xlabel('Demand')
 
 %--------------------------------
 %1e------------------------------
