@@ -38,7 +38,7 @@ A = [2 0 0 0 0;
 %options = optimoptions('linprog', 'Algorithm', 'interior-point', 'Display', 'off');
 %options = optimoptions('linprog', 'Algorithm', 'dual-simplex', 'Display', 'iter');
 options = optimoptions('linprog', 'Algorithm', 'dual-simplex', 'Display', 'off');
-[x,fval,exitflag,output,lambda] = linprog(c', A, b, [], [], lb, [], [], options);
+[x,fval,exitflag,output,lambda_1b] = linprog(c', A, b, [], [], lb, [], [], options);
 x
 
 %--------------------------------
@@ -50,21 +50,24 @@ profit = -c*x
 
 profitArray = [profit];
 demandArray = [b(5)];
+shadowPriceArray = [20000];
  
  while true
     oldProfit = profit;
     
     b = b + b_incr;
     
-    [x,fval,exitflag,output,lambda] = linprog(c', A, b, [], [], lb, [], [], options);
+    [x,fval,exitflag,output,lambda_1d] = linprog(c', A, b, [], [], lb, [], [], options);
     profit = -c*x
     profitArray=[profitArray profit];
     demandArray=[demandArray b(5)];
+    shadowPriceArray=[shadowPriceArray lambda_1d.ineqlin(5)];
     if((profit-oldProfit) < 0.1), break, end
  end
-plot(demandArray, profitArray)
-ylabel('Total Profit (1000 SEK)')
+plot(demandArray, profitArray*1000*10000)
+ylabel('Total Profit (SEK)')
 xlabel('Demand')
+shadowPriceArray;
 
 %--------------------------------
 %1e------------------------------
@@ -78,7 +81,7 @@ b = [36;
      34;
      28]; %reset our b matrix, since we messed with that in 1d
   
-[x,fval,exitflag,output,lambda] = linprog(c', A, b, [], [], lb, [], [], options); %to reset our x values
+[x,fval,exitflag,output,lambda_1ea] = linprog(c', A, b, [], [], lb, [], [], options); %to reset our x values
 startC = c; %values to reset to for the beta loop
 startX = x; %values to reset to for the beta loop
 
@@ -92,7 +95,7 @@ beta = 4;
 while true
     c = c - [price_incr 0 0 0 0];
     alfa = alfa + price_incr;
-    [x,fval,exitflag,output,lambda] = linprog(c', A, b, [], [], lb, [], [], options);
+    [x,fval,exitflag,output,lambda_1ea] = linprog(c', A, b, [], [], lb, [], [], options);
     if(isequal(oldX, x) == false), break, end
     oldX = x;
 end
@@ -104,9 +107,9 @@ c = startC;
 while true
     c = c + [price_incr 0 0 0 0];
     beta = beta - price_incr;
-    [x,fval,exitflag,output,lambda] = linprog(c', A, b, [], [], lb, [], [], options);
+    [x,fval,exitflag,output,lambda_1eb] = linprog(c', A, b, [], [], lb, [], [], options);
     if(isequal(oldX, x) == false), break, end
-    %if(beta > 10), break, end %can be used to break loop when beta gets way too big
+    if(beta > 10), break, end %can be used to break otherwise infinite loop
     oldX = x;
 end
 beta %upper bound

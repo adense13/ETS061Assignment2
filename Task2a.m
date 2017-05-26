@@ -6,9 +6,9 @@ c = [-1;
 A = [2 -1;
      -1 1;
      1 4];
- b = [double(intmax);
-      double(intmax);
-      double(intmax)];
+ b = [4;
+      1;
+      12];
  lb = [0;
        0];
  %options = optimoptions('intlinprog', 'Display', 'iter');
@@ -17,9 +17,4 @@ A = [2 -1;
            2];
 [x, fval, exitflag, output] = intlinprog(c', intcon, A, b, [], [], lb, [], options)
 
-z=(-c).*x;
-
-%2.b
-options_l = optimoptions('linprog', 'Algorithm', 'dual-simplex', 'Display', 'off');
-[x_l,fval_l,exitflag_l,output_l,lambda_l] = linprog(c', A, b, [], [], lb, [], [], options_l);
-z_l=(-c).*x_l;
+z=(-c)'*x;
