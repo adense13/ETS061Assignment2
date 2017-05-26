@@ -51,7 +51,7 @@ while true
     beta = beta - price_incr;
     [x,fval,exitflag,output,lambda_1eb] = linprog(c', A, b, [], [], lb, [], [], options);
     if(isequal(oldX, x) == false), break, end
-    if(beta > 10), break, end %can be used to break otherwise infinite loop
+    %if(beta > 10), break, end %can be used to break otherwise infinite loop
     oldX = x;
 end
 beta %upper bound
